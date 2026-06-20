@@ -525,6 +525,7 @@ function buildPills() {
       p.classList.add('active');
       activeCat = p.dataset.cat;
       render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
 
