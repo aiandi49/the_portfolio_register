@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Portfolio Register — Full Deployment Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F7F4EE;
+    --warm:#EDE8DF;
+    --stone:#C9BFA8;
+    --ink:#1C1A17;
+    --ink-mid:#4A4640;
+    --ink-mute:#8A837A;
+    --gold:#B8963E;
+    --gold-lt:#D4AC58;
+    --gold-bg:rgba(184,150,62,0.08);
+    --gold-bg-md:rgba(184,150,62,0.14);
+    --white:#FFFFFF;
+    --blue:#2A5FA8;
+    --blue-bg:#EBF1FB;
+    --border:rgba(100,90,76,0.15);
+    --border-md:rgba(100,90,76,0.25);
+    --shadow-sm:0 2px 8px rgba(28,26,23,0.06);
+    --shadow-md:0 8px 32px rgba(28,26,23,0.10);
+    --shadow-lg:0 20px 60px rgba(28,26,23,0.12);
+    --r:10px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'DM Sans',sans-serif;
+    font-weight:400;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+  }
+  body::before{
+    content:'';
+    position:fixed; inset:0;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(184,150,62,0.07) 0%, transparent 70%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    pointer-events:none;
+    z-index:0;
+  }
+  ::selection{ background:var(--gold); color:var(--white); }
+
+  /* ===== MASTHEAD ===== */
+  header.masthead{
+    position:relative; z-index:1;
+    padding:64px 24px 40px;
+    text-align:center;
+  }
+  .eyebrow{
+    font-family:'DM Sans',sans-serif;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    font-weight:500;
+    font-size:11px;
+    color:var(--stone);
+    margin-bottom:18px;
+  }
+  .eyebrow span{ color:var(--border-md); margin:0 10px; }
+  h1.title{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:600;
+    font-size:clamp(40px,7vw,80px);
+    line-height:1.02;
+    margin:0 0 18px;
+    letter-spacing:-0.01em;
+    color:var(--ink);
+  }
+  h1.title em{
+    font-style:italic;
+    font-weight:500;
+    color:var(--gold);
+  }
+  .dek{
+    font-family:'DM Sans',sans-serif;
+    font-weight:300;
+    font-size:17px;
+    color:var(--ink-mid);
+    max-width:600px;
+    margin:0 auto;
+    line-height:1.65;
+  }
+  .dateline{
+    font-family:'DM Sans',sans-serif;
+    font-size:11px;
+    font-weight:500;
+    letter-spacing:0.1em;
+    color:var(--ink-mute);
+    margin-top:22px;
+    text-transform:uppercase;
+  }
+
+  /* ===== STAT PLAQUE ===== */
+  .plaque{
+    position:relative; z-index:1;
+    max-width:880px;
+    margin:44px auto 0;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    background:var(--white);
+    border:1px solid var(--border);
+    border-radius:var(--r);
+    box-shadow:var(--shadow-sm);
+    overflow:hidden;
+  }
+  .plaque .stat{
+    padding:24px 14px;
+    text-align:center;
+    border-right:1px solid var(--border);
+  }
+  .plaque .stat:last-child{ border-right:none; }
+  .plaque .num{
+    font-family:'Cormorant Garamond',serif;
+    font-size:36px;
+    font-weight:600;
+    color:var(--gold);
+    line-height:1;
+  }
+  .plaque .lbl{
+    font-family:'DM Sans',sans-serif;
+    font-size:10px;
+    font-weight:500;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--ink-mute);
+    margin-top:8px;
+  }
+
+  /* ===== CONTROL BAR ===== */
+  .control-wrap{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(247,244,238,0.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border-md);
+  }
+  .control-bar{
+    max-width:1180px;
+    margin:0 auto;
+    padding:16px 24px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+  }
+  .search-box{
+    flex:1 1 220px;
+    position:relative;
+  }
+  .search-box input{
+    width:100%;
+    background:var(--white);
+    border:1px solid var(--border-md);
+    color:var(--ink);
+    font-family:'DM Sans',sans-serif;
+    font-size:13px;
+    padding:10px 14px 10px 30px;
+    border-radius:100px;
+    outline:none;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .search-box input::placeholder{ color:var(--ink-mute); }
+  .search-box input:focus{ border-color:var(--gold); box-shadow:0 0 0 3px rgba(184,150,62,0.12); }
+  .search-box::before{
+    content:'⌕';
+    position:absolute;
+    left:11px; top:50%;
+    transform:translateY(-50%);
+    color:var(--ink-mute);
+    font-size:15px;
+  }
+  .pill{
+    font-family:'DM Sans',sans-serif;
+    font-size:12px;
+    font-weight:500;
+    letter-spacing:0.02em;
+    padding:9px 15px;
+    border:1px solid var(--border-md);
+    background:var(--white);
+    color:var(--ink-mid);
+    border-radius:100px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:all .15s ease;
+  }
+  .pill:hover{ border-color:var(--gold); color:var(--ink); }
+  .pill.active{ background:var(--gold); border-color:var(--gold); color:var(--white); font-weight:600; }
+  .count-readout{
+    font-family:'DM Sans',sans-serif;
+    font-size:11px;
+    color:var(--ink-mute);
+    margin-left:auto;
+    padding-left:8px;
+    white-space:nowrap;
+  }
+
+  /* ===== MAIN ===== */
+  main{ position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:48px 24px 100px; }
+
+  .section{ margin-bottom:56px; }
+  .section.is-hidden{ display:none; }
+
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    gap:16px;
+    margin-bottom:6px;
+  }
+  .section-head .idx{
+    font-family:'DM Sans',sans-serif;
+    font-size:12px;
+    color:var(--gold);
+  }
+  .section-head h2{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:600;
+    font-size:28px;
+    margin:0;
+    letter-spacing:-0.01em;
+    color:var(--ink);
+  }
+  .section-head .tally{
+    font-family:'DM Sans',sans-serif;
+    font-size:11px;
+    color:var(--ink-mute);
+    margin-left:auto;
+  }
+  .section-desc{
+    font-size:14px;
+    color:var(--ink-mid);
+    max-width:640px;
+    margin:8px 0 28px;
+    line-height:1.55;
+  }
+
+  .section.featured{
+    border:1px solid rgba(184,150,62,0.30);
+    background:linear-gradient(180deg, var(--gold-bg), transparent 22%), var(--white);
+    padding:32px 28px 36px;
+    border-radius:14px;
+    box-shadow:var(--shadow-sm);
+  }
+  .section.featured .section-head h2{ color:var(--ink); }
+  .section.featured .section-head::before{
+    content:'★';
+    color:var(--gold);
+    font-size:16px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(280px,1fr));
+    gap:14px;
+  }
+
+  .card{
+    position:relative;
+    background:var(--white);
+    border:1px solid var(--border);
+    padding:20px 18px 18px;
+    border-radius:var(--r);
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    box-shadow:var(--shadow-sm);
+    transition:border-color .15s ease, transform .15s ease, box-shadow .15s ease;
+  }
+  .card:hover{ border-color:var(--gold-lt); transform:translateY(-2px); box-shadow:var(--shadow-md); }
+
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .card-no{
+    font-family:'DM Sans',sans-serif;
+    font-size:10px;
+    font-weight:500;
+    color:var(--stone);
+    letter-spacing:0.06em;
+  }
+  .stamp{
+    font-family:'DM Sans',sans-serif;
+    font-size:9.5px;
+    font-weight:500;
+    letter-spacing:0.08em;
+    background:var(--gold-bg-md);
+    border:1px solid rgba(184,150,62,0.28);
+    color:var(--gold);
+    padding:3px 9px;
+    border-radius:100px;
+    text-transform:uppercase;
+    flex-shrink:0;
+  }
+  .card[data-cat]:not([data-cat="RE"]) .stamp{
+    background:var(--blue-bg);
+    border-color:rgba(42,95,168,0.20);
+    color:var(--blue);
+  }
+  .card-name{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:600;
+    font-size:19px;
+    line-height:1.25;
+    margin:0;
+    color:var(--ink);
+  }
+  .card-blurb{
+    font-size:12.5px;
+    color:var(--ink-mid);
+    line-height:1.55;
+    flex-grow:1;
+  }
+  .card-url{
+    font-family:'DM Sans',sans-serif;
+    font-size:12px;
+    font-weight:500;
+    color:var(--ink-mid);
+    text-decoration:none;
+    border-top:1px solid var(--border);
+    padding-top:10px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:6px;
+    transition:color .15s ease;
+  }
+  .card-url:hover{ color:var(--gold); }
+  .card-url .arrow{ opacity:0.55; }
+  .card-repo{
+    font-family:'DM Sans',sans-serif;
+    font-size:10.5px;
+    color:var(--ink-mute);
+  }
+
+  /* ===== FOOTER ===== */
+  footer{
+    position:relative; z-index:1;
+    border-top:1px solid var(--border-md);
+    padding:36px 24px 50px;
+    text-align:center;
+  }
+  footer .fnote{
+    font-family:'DM Sans',sans-serif;
+    font-size:11px;
+    color:var(--ink-mute);
+    max-width:560px;
+    margin:0 auto;
+    line-height:1.7;
+  }
+  footer .fbrand{
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;
+    color:var(--gold);
+    font-size:15px;
+    margin-bottom:10px;
+  }
+
+  .no-results{
+    font-family:'DM Sans',sans-serif;
+    color:var(--ink-mute);
+    font-size:13px;
+    padding:40px 0;
+    text-align:center;
+    display:none;
+  }
+
+  @media (max-width:640px){
+    .plaque{ grid-template-columns:repeat(2,1fr); }
+    .plaque .stat:nth-child(2n){ border-right:none; }
+    .plaque .stat:nth-child(1), .plaque .stat:nth-child(2){ border-bottom:1px solid var(--border); }
+    .control-bar{ justify-content:flex-start; }
+    .count-readout{ margin-left:0; flex-basis:100%; }
+  }
+</style>
+</head>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="eyebrow">AIANDI49 HOLDINGS <span>·</span> VERCEL DEPLOYMENT LEDGER <span>·</span> EST. RUNNING</div>
+  <h1 class="title">The Portfolio<br><em>Register</em></h1>
+  <p class="dek">Every project currently deployed — one continuous ledger, so nothing has to be found by hand again. Real estate holdings lead the book; everything else follows by category.</p>
+  <div class="dateline">PHOENIX, ARIZONA — JUNE 19, 2026</div>
+
+  <div class="plaque">
+    <div class="stat"><div class="num">76</div><div class="lbl">Total Deployments</div></div>
+    <div class="stat"><div class="num">23</div><div class="lbl">Real Estate Holdings</div></div>
+    <div class="stat"><div class="num">8</div><div class="lbl">Categories</div></div>
+    <div class="stat"><div class="num">1</div><div class="lbl">Operator</div></div>
+  </div>
+</header>
+
+<div class="control-wrap">
+  <div class="control-bar" id="controlBar">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search the ledger by name…">
+    </div>
+    <!-- pills injected by JS -->
+    <div class="count-readout" id="countReadout"></div>
+  </div>
+</div>
+
+<main id="main">
+  <!-- sections injected by JS -->
+  <div class="no-results" id="noResults">No entries match that search.</div>
+</main>
+
+<footer>
+  <div class="fbrand">— end of ledger —</div>
+  <div class="fnote">Compiled from the Vercel projects dashboard, June 19, 2026. Live-app links go straight to each deployment. GitHub repo names are shown as captured from the dashboard — a few are truncated where the source list cut them off. Real estate entries are flagged first for a future standalone portfolio.</div>
+</footer>
+
+<script id="data" type="application/json"></script>
+<script>
+
+const ITEMS = [[1, "Backyard Home Upgrade Guide", "backyard-home-upgrade-guide.vercel.app", "aiandi49/Backyard_Home\u2026", "RE", "A homeowner's walkthrough for backyard renovation ideas and upgrade planning."], [2, "Valley View", "valley-view-delta.vercel.app", "aiandi49/valley-view", "RE", "Property showcase site for the Valley View listing."], [3, "153 Mandovi \u2014 One-Pager", "153-mandovi-onepager.vercel.app", "aiandi49/153_mandovi_on\u2026", "RE", "Single-page property brief for the 153 Mandovi address."], [4, "AI Property Transformation", "ai-property-transformation.vercel.app", "aiandi49/ai-property-trans\u2026", "RE", "AI-generated before/after value cards for property improvements."], [5, "Ascent on Pantano \u2014 Video Handoff", "ascent-on-pantano-video-handoff.vercel.app", "aiandi49/Ascent_on_Pant\u2026", "RE", "Video delivery page for the Ascent on Pantano property."], [6, "Apartment Communities Landing", "apartment-communities-landing.vercel.app", "aiandi49/apartment-com\u2026", "RE", "Landing page for multifamily apartment community marketing."], [7, "Showcase Real Estate", "showcase-realestate.vercel.app", "aiandi49/showcase_reale\u2026", "RE", "General-purpose real estate showcase template."], [8, "Cinematic Partnership", "cinematic-partnership.vercel.app", "aiandi49/cinematic_partn\u2026", "RE", "Pitch page for real estate cinematic video partnerships."], [9, "Potential Projects", "potential-projects.vercel.app", "aiandi49/potential_projects", "RE", "Pipeline tracker for prospective property deals."], [10, "35980 US-45", "35980-us45.vercel.app", "aiandi49/35980_us45", "RE", "Single-property listing page, 35980 US-45."], [11, "Backyard Transformation", "baackyard-transformation.vercel.app", "aiandi49/baackyard_trans\u2026", "RE", "Collapsible before/after gallery for backyard renovation work."], [12, "Understanding the Amendments", "understanding-the-amendments.vercel.app", "aiandi49/understanding_t\u2026", "RE", "Plain-language explainer for property / HOA amendment documents."], [13, "5050 E. Speedway", "5050-e-speedway.vercel.app", "aiandi49/5050-e-speedw\u2026", "RE", "Aerial-image listing page for 5050 E. Speedway."], [14, "Blueprint Co-Vision", "blueprint-co-vision.vercel.app", "aiandi49/blueprint-co-visi\u2026", "RE", "Architectural blueprint / co-vision planning page."], [15, "Trekell I8", "trekell-i8.vercel.app", "aiandi49/trekell_i8", "RE", "Property profile for the Trekell I8 project."], [16, "Trekell I8 \u2014 Drone Footage", "trekelli8-drone-footage.vercel.app", "aiandi49/trekelli8-drone-f\u2026", "RE", "Aerial drone footage gallery for Trekell I8."], [17, "Empire Pizza \u2014 Enhanced", "empire-pizza-enhanced.vercel.app", "aiandi49/empire-pizza-en\u2026", "RE", "Commercial listing page, enhanced version, Empire Pizza site."], [18, "Block 175", "block-175.vercel.app", "aiandi49/block-175", "RE", "Lazy-loaded video listing page for the Block 175 property."], [19, "325 N. Church Ave", "325-n-church-ave.vercel.app", "aiandi49/325_n_church_a\u2026", "RE", "Single-property listing for 325 N. Church Ave."], [20, "Empire Pizza \u2014 Commercials", "empire-pizza-commercials.vercel.app", "aiandi49/empire-pizza-co\u2026", "RE", "Commercial film reel page tied to the Empire Pizza property."], [21, "4915 E. Speedway", "4915-e-speedway.vercel.app", "aiandi49/4915-e-speedway", "RE", "Lightbox listing page for 4915 E. Speedway."], [22, "7351 N. Secret Canyon Drive", "7351-n-secret-canyon-drive.vercel.app", "aiandi49/7351-n-secret-c\u2026", "RE", "Single-property listing for 7351 N. Secret Canyon Drive."], [23, "801 Calle Elena", "801-calle-elena.vercel.app", "aiandi49/801-calle-elena", "RE", "Single-property listing for 801 Calle Elena."], [24, "Pet Hub", "pet-hub-three.vercel.app", "aiandi49/pet-hub", "PET", "Central hub site for pet-related content."], [25, "PetHub Shop", "pethub-shop.vercel.app", "aiandi49/pethub-shop", "PET", "Storefront companion to Pet Hub."], [26, "Paw Pound", "paw-pound.vercel.app", "aiandi49/paw-pound", "PET", "Pet adoption / shelter-style listing site."], [27, "PawMatch", "pawmatch-seven.vercel.app", "aiandi49/pawmatch", "PET", "Matching tool pairing pets with adopters."], [28, "Tucson Pet Finder", "tucson-pet-finder.vercel.app", "aiandi49/tucson-pet-finder", "PET", "Local Tucson-area lost-and-found / adoption finder."], [29, "Bertie Foundation", "bertie-foundation.vercel.app", "aiandi49/bertie-foundation", "NPO", "Nonprofit foundation site with a donations component."], [30, "Bertie Foundation \u2014 Video Catalogue", "bertie-foundation-video-catalogue.vercel.app", "aiandi49/bertie-foundatio\u2026", "NPO", "Video archive companion to the Bertie Foundation site."], [31, "Lamar Senior Center \u2014 Invitations", "lamar-senior-center-invitations.vercel.app", "aiandi49/lamar_senior_ce\u2026", "NPO", "Event invitation page for the Lamar Senior Center."], [32, "Lamar AI Seniors Guide", "lamar-ai-seniors-guide.vercel.app", "aiandi49/lamar_ai_seniors\u2026", "NPO", "AI-assisted guide built for a senior community."], [33, "Abundance Legacy \u2014 Landing Page", "abundance-legacy-landing-page.vercel.app", "aiandi49/abundance_lega\u2026", "NPO", "Landing page for the Abundance Legacy initiative."], [34, "Kam Knorwood \u2014 App", "kam-knorwood-app.vercel.app", "aiandi49/kam_knorwood_\u2026", "CLIENT", "Primary client app for Kam Knorwood \u2014 responsive portal with Twilio, Supabase and Resend integrations."], [35, "Kam Norwood \u2014 Portals", "kam-norwood-portals.vercel.app", "aiandi49/kam-norwood-p\u2026", "CLIENT", "Companion portal site for Kam Norwood."], [36, "Chaffle Lujah", "chaffle-lujah.vercel.app", "aiandi49/chaffle_lujah", "CLIENT", "Event-description site for the Chaffle Lujah brand."], [37, "Lamar Myers \u2014 Business Card", "lamar-myers-biz-card.vercel.app", "aiandi49/lamar_myers_biz\u2026", "CLIENT", "Digital business card / portfolio for Lamar Myers."], [38, "Gloria Myers \u2014 Imagery", "gloria-myers-imagery.vercel.app", "aiandi49/gloria-myers-ima\u2026", "CLIENT", "Personal photo gallery site for Gloria Myers."], [39, "Gloria Myers \u2014 Neuroplasticity Assessment", "gloriamyers-neuroplasticityassessme.vercel.app", "aiandi49/gloriamyers_neu\u2026", "CLIENT", "Personal assessment / wellness microsite for Gloria Myers."], [40, "Emma Modeling AI", "emma-modeling-ai.vercel.app", "aiandi49/emma-modeling\u2026", "CLIENT", "AI modeling portfolio site for Emma."], [41, "MetaEarth Video Repository", "metaearth-video-repository.vercel.app", "aiandi49/metaearth_video\u2026", "MEDIA", "Full-screen video modal repository for MetaEarth content."], [42, "MetaEarth Outreach", "metaearth-outreach.vercel.app", "aiandi49/metaearth-outre\u2026", "MEDIA", "Outreach platform \u2014 Tucson industries AI audit tool."], [43, "Cinematic Agent System", "cinematic-agent-system.vercel.app", "aiandi49/cinematic-agent-\u2026", "MEDIA", "Multi-account diagnostics system for cinematic agent workflows (Gmail, Stripe, Anthropic integrations)."], [44, "Alternate Story Hub", "alternate-story-hub.vercel.app", "aiandi49/alternate-story-h\u2026", "MEDIA", "Hub for alternate-format storytelling content."], [45, "Frankie \u2014 Press Release", "frankie-press-release.vercel.app", "aiandi49/frankie-press-rel\u2026", "MEDIA", "Press release page built for the Frankie brand."], [46, "YouTube Upload Intelligence", "youtube-upload-intelligence.vercel.app", "aiandi49/youtube-upload-\u2026", "MEDIA", "Tooling to analyze and route YouTube uploads."], [47, "YouTube for All", "youtube-for-all.vercel.app", "aiandi49/youtube_for_all", "MEDIA", "Server-backed YouTube access utility."], [48, "Drone Mastery", "drone-mastery.vercel.app", "aiandi49/drone-mastery", "MEDIA", "Drone footage / piloting showcase site."], [49, "Email Intelligence Hub", "email-intelligence-hub.vercel.app", "aiandi49/email-intelligenc\u2026", "MEDIA", "Hub for parsing and routing email intelligence."], [50, "Siam Lux Rides", "siam-lux-rides.vercel.app", "aiandi49/siam_lux_rides", "TRAVEL", "Luxury ride-service site, core build."], [51, "Siam Lux Rides \u2014 Partner Outreach 2026", "siam-lux-rides-partner-outreach-202.vercel.app", "aiandi49/SiamLuxRides_P\u2026", "TRAVEL", "Partner-outreach microsite contacting car rental companies."], [52, "Hola Canc\u00fan", "hola-cancun.vercel.app", "aiandi49/hola-cancun", "TRAVEL", "Travel / destination guide site for Canc\u00fan."], [53, "Tucson Connect", "tucson-connect.vercel.app", "aiandi49/tucson-connect", "TRAVEL", "Local Tucson community connection platform."], [54, "Partner Recruit", "partner-recruit.vercel.app", "aiandi49/partner-recruit", "BIZ", "Recruitment landing page for new business partners."], [55, "Ms. Lee Global Consulting", "ms-lee-global-consulting.vercel.app", "aiandi49/ms-lee-global-c\u2026", "BIZ", "Consulting firm site with a 20-variable Supabase backend."], [56, "Ms. Lee Global \u2014 Emergency Form", "msleeglobal-emergency-form.vercel.app", "aiandi49/msleeglobal-em\u2026", "BIZ", "Emergency-intake form companion to Ms. Lee Global Consulting."], [57, "Intelligence Unlocked", "intelligence-unlocked.vercel.app", "aiandi49/intelligence_unlo\u2026", "BIZ", "General knowledge / intelligence resource site."], [58, "Secure Vault", "secure-vault-lovat.vercel.app", "aiandi49/secure-vault", "BIZ", "Secure document / credential vault utility."], [59, "Justice Path", "justice-path.vercel.app", "aiandi49/justice-path", "BIZ", "Legal-services guidance site."], [60, "Just Solutions", "just-solutions.vercel.app", "aiandi49/just-solutions", "BIZ", "Core site for the Just Solutions brand."], [61, "Just Solutions \u2014 Marketing", "just-solutions-marketing.vercel.app", "aiandi49/just-solutions-m\u2026", "BIZ", "Marketing microsite for Just Solutions."], [62, "Group Temperature Tool", "group-temperature-tool.vercel.app", "aiandi49/group-temperatu\u2026", "BIZ", "Lightweight chat / group-temperature utility app."], [63, "Taskflow", "taskflow-one-iota.vercel.app", "aiandi49/taskflow", "BIZ", "Task management application."], [64, "The Real One", "the-real-one-rouge.vercel.app", "aiandi49/the_real_one", "BIZ", "Standalone branded landing page."], [65, "Soul Healing Soaps", "soul-healing-soaps.vercel.app", "aiandi49/soul_healing_so\u2026", "BIZ", "E-commerce style site for an artisan soap brand."], [66, "Meme Coin Mastery", "meme-coin-mastery.vercel.app", "aiandi49/meme-coin-mast\u2026", "BIZ", "Educational site on meme-coin trading concepts."], [67, "MemeCoin Command Center", "memecoin-command-center.vercel.app", "aiandi49/memecoin-com\u2026", "BIZ", "Dashboard / command center for meme-coin tracking."], [68, "AINI Marketplace", "aini-marketplace.vercel.app", "aiandi49/aini-marketplace", "BIZ", "Marketplace platform concept site."], [69, "Warpath", "warpath-eight.vercel.app", "aiandi49/warpath", "BIZ", "Ebook delivery site (Luke Ferguson ebook)."], [70, "ABL Calculator", "abl-calculator-ruddy.vercel.app", "aiandi49/abl-calculator", "BIZ", "Asset-based lending calculator tool."], [71, "JBRT", "jbrt-three.vercel.app", "aiandi49/jbrt", "BIZ", "Standalone utility / client project."], [72, "Keyana Lawson \u2014 Proposal", "keyana-lawson-proposal.vercel.app", "aiandi49/keyana_lawson_\u2026", "FAMILY", "Personal proposal page for Keyana Lawson."], [73, "Mother's Day \u2014 Jan", "mothers-day-jan.vercel.app", "aiandi49/mothers-day-jan", "FAMILY", "Personal Mother's Day tribute site."], [74, "Mother's Day \u2014 Cathy", "mothers-day-cathy.vercel.app", "aiandi49/mothers-day-cat\u2026", "FAMILY", "Personal Mother's Day tribute site."], [75, "Sacred Heart \u2014 Proposal", "sacred-heart-proposal.vercel.app", "aiandi49/sacred-heart-pro\u2026", "FAMILY", "Personal proposal page, Sacred Heart theme."], [76, "Fraction Fun World", "fraction-fun-world.vercel.app", "aiandi49/fraction-fun-world", "FAMILY", "Educational fractions game for kids."]];
+const CATS = [["RE", "Real Estate & Property", "Brass-bound holdings \u2014 every address, listing and property tool in the operation."], ["PET", "Pet & Animal Services", "Adoption, matching and shelter-style tools."], ["NPO", "Nonprofit, Community & Causes", "Foundations, senior centers and community giving."], ["CLIENT", "Client Portfolios & Personal Branding", "Personal sites, business cards and client portals."], ["MEDIA", "Media, Video & Content Tools", "Video repositories, press tools and content infrastructure."], ["TRAVEL", "Travel & Transportation", "Ride services and destination guides."], ["BIZ", "Finance, Crypto & Business Tools", "Calculators, dashboards, consulting and internal tools."], ["FAMILY", "Family, Events & Personal", "Proposals, tributes and personal milestones."]];
+
+const catMeta = {};
+CATS.forEach(c => catMeta[c[0]] = {label: c[1], desc: c[2]});
+
+let activeCat = 'ALL';
+let query = '';
+
+function cardHTML(it) {
+  const [n, name, url, repo, cat] = it;
+  const blurb = it[5];
+  const isRE = cat === 'RE';
+  return `
+    <div class="card" data-cat="${cat}" data-name="${name.toLowerCase()}">
+      <div class="card-top">
+        <span class="card-no">No. ${String(n).padStart(3,'0')}</span>
+        <span class="stamp">${isRE ? 'HOLDING' : 'LIVE'}</span>
+      </div>
+      <h3 class="card-name">${name}</h3>
+      <p class="card-blurb">${blurb}</p>
+      <a class="card-url" href="https://${url}" target="_blank" rel="noopener">
+        <span>${url}</span><span class="arrow">↗</span>
+      </a>
+      <div class="card-repo">${repo}</div>
+    </div>
+  `;
+}
+
+function render() {
+  const main = document.getElementById('main');
+  // clear existing sections (keep no-results div)
+  [...main.querySelectorAll('.section')].forEach(s => s.remove());
+
+  const q = query.trim().toLowerCase();
+  let totalShown = 0;
+  const noResults = document.getElementById('noResults');
+
+  // order: RE first (featured), then rest in CATS order
+  CATS.forEach(([key, label, desc]) => {
+    if (activeCat !== 'ALL' && activeCat !== key) return;
+
+    let group = ITEMS.filter(it => it[4] === key);
+    if (q) group = group.filter(it => it[1].toLowerCase().includes(q) || it[2].toLowerCase().includes(q));
+    if (group.length === 0) return;
+
+    totalShown += group.length;
+
+    const section = document.createElement('section');
+    section.className = 'section' + (key === 'RE' ? ' featured' : '');
+    section.id = 'sec-' + key;
+
+    section.innerHTML = `
+      <div class="section-head">
+        <h2>${label}</h2>
+        <span class="tally">${group.length} ${group.length === 1 ? 'entry' : 'entries'}</span>
+      </div>
+      <p class="section-desc">${desc}</p>
+      <div class="grid">${group.map(cardHTML).join('')}</div>
+    `;
+    main.insertBefore(section, noResults);
+  });
+
+  document.getElementById('countReadout').textContent = `Showing ${totalShown} of 76`;
+  noResults.style.display = totalShown === 0 ? 'block' : 'none';
+}
+
+function buildPills() {
+  const bar = document.getElementById('controlBar');
+  const search = document.getElementById('searchInput');
+  const readout = document.getElementById('countReadout');
+
+  const allPill = document.createElement('button');
+  allPill.className = 'pill active';
+  allPill.textContent = 'All (76)';
+  allPill.dataset.cat = 'ALL';
+  bar.insertBefore(allPill, readout);
+
+  const shortLabels = {
+    RE: 'Real Estate', PET: 'Pet & Animal', NPO: 'Nonprofit',
+    CLIENT: 'Client', MEDIA: 'Media', TRAVEL: 'Travel',
+    BIZ: 'Finance & Biz', FAMILY: 'Family'
+  };
+  CATS.forEach(([key]) => {
+    const count = ITEMS.filter(it => it[4] === key).length;
+    const btn = document.createElement('button');
+    btn.className = 'pill' + (key === 'RE' ? ' re' : '');
+    btn.textContent = `${shortLabels[key]} (${count})`;
+    btn.dataset.cat = key;
+    bar.insertBefore(btn, readout);
+  });
+
+  bar.querySelectorAll('.pill').forEach(p => {
+    p.addEventListener('click', () => {
+      bar.querySelectorAll('.pill').forEach(x => x.classList.remove('active'));
+      p.classList.add('active');
+      activeCat = p.dataset.cat;
+      render();
+    });
+  });
+
+  search.addEventListener('input', (e) => {
+    query = e.target.value;
+    render();
+  });
+}
+
+buildPills();
+render();
+
+</script>
+</body>
+</html>
